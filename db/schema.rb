@@ -60,7 +60,7 @@ ActiveRecord::Schema.define(version: 20160711082135) do
     t.datetime "start"
     t.datetime "finish"
     t.integer  "status"
-    t.integer  "type"
+    t.integer  "poll_type"
     t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

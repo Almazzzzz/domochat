@@ -4,7 +4,8 @@ class User < ActiveRecord::Base
   has_many :identities, dependent: :destroy
   has_many :emails, dependent: :destroy
   has_one :profile, dependent: :destroy
-  has_many :polls
+  has_many :polls, -> { includes :options }
+  accepts_nested_attributes_for :polls
   has_many :votes
 
   TEMP_EMAIL_PREFIX = 'dc@user'

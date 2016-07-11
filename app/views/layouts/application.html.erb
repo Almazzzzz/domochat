@@ -57,6 +57,7 @@
               <ul class="dropdown-menu">
                 <li><%= link_to "Show Profile", profile_path %></li>
                 <li><%= link_to "Edit Account", edit_user_registration_path %></li>
+                <li><%= link_to "My (All) Polls", polls_path %></li>
                 <li role="separator" class="divider"></li>
                 <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete %></li>
               </ul>
@@ -89,6 +90,7 @@
 
               <% if user_signed_in? %>
               <li><%= link_to "Create New Email", new_user_email_path(current_user) %></li>
+              <li><%= link_to "Create New Poll", new_poll_path %></li>
               <% else %>
               <li><%= link_to "Link1", "/path1"  %></li>
               <% end %>

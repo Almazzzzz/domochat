@@ -6,7 +6,7 @@ class CreatePolls < ActiveRecord::Migration
       t.datetime :start
       t.datetime :finish
       t.integer :status
-      t.integer :type
+      t.integer :poll_type
       t.references :user, index: true, foreign_key: true
 
       t.timestamps null: false
