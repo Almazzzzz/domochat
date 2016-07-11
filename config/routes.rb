@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :polls
   resource :profile, only: [:show, :update, :edit]
   resources :flats
   resources :posts
