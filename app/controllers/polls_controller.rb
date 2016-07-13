@@ -1,40 +1,70 @@
 class PollsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user
-  before_action :set_poll, only: [:show, :edit, :update, :destroy]
+  before_action :set_poll, only: [:voting, :show, :edit, :update, :destroy]
+  before_action :set_editing_time, only: [:edit, :show, :index, :my_index]
+  
+  # Set editing poll time limit
+  def set_editing_time
+  	@editing_time = 10.hour
+  end
 
   # GET /polls
   # GET /polls.json
   def index
     @polls = Poll.all.order("status ASC")
   end
+  
+  def my_index
+    @polls = current_user.polls.order("status ASC")
+  end
+
 
   # GET /polls/1
   # GET /polls/1.json
   def show
-    @options = Option.where(:poll_id => @poll.id) 
+    # Вынести определение @options или @poll.options (везде по-разному) в отдельный метод
+    #@options = Option.where(:poll_id => @poll.id)
   end
 
   # GET /polls/new
   def new
     @poll = Poll.new
-    #@poll.options.build
+    @option = Option.new
   end
 
   # GET /polls/1/edit
   def edit
+  	# Если успею, то вынести в отдельные методы
+  	alert_string = ''
+  	if @poll.user != current_user || (DateTime.now.to_i - @poll.created_at.to_i) > @editing_time
+  		if @poll.user != current_user
+  			alert_string = "Sorry! You can edit only your own polls. "
+  			path = my_polls_path
+  		end
+  		if (DateTime.now.to_i - @poll.created_at.to_i) > @editing_time
+  			alert_string = alert_string + "Sorry! You can't edit this poll, 'cause editing time limit is over."
+  			path = @poll
+  		end			
+			respond_to do |format|
+  			format.html { redirect_to path, alert: alert_string }
+  		end
+  	end
+  end
+
+  # GET /polls/1/voting
+  def voting
   end
 
   # POST /polls
   # POST /polls.json
   def create
     @poll = Poll.new(poll_params)
-
-    @poll.status = 2
-    @poll.user = @user
+    @poll.status = 1
+    @poll.user = current_user
 
     respond_to do |format|
-      if @poll.save && check_poll_datetime
+      if check_poll_datetime && @poll.save
+        save_poll_options
         format.html { redirect_to @poll, notice: 'Poll was successfully created.' }
         format.json { render :show, status: :created, location: @poll }
       else
@@ -49,6 +79,7 @@ class PollsController < ApplicationController
   def update
     respond_to do |format|
       if @poll.update(poll_params)# && check_poll_datetime
+        save_poll_options
         format.html { redirect_to @poll, notice: 'Poll was successfully updated.' }
         format.json { render :show, status: :ok, location: @poll }
       else
@@ -68,27 +99,46 @@ class PollsController < ApplicationController
     end
   end
 
+  def save_poll_options
+    if @poll.options.empty?
+      params[:options].each do |option|
+        if option[:poll_option] != ""
+          new_option = Option.new
+          new_option.poll_option = option[:poll_option]
+          new_option.poll_id = @poll.id
+          new_option.save!
+        end
+      end
+    else
+      params[:options].each do |option|
+        if option[1] != ""
+          update_option = Option.where(:id => option[0].to_i).first
+          update_option.poll_option = option[1]
+          update_option.save!
+        end
+      end
+    end
+  end
+
+  def results
+    @options = @poll.options
+  end
+
   private
+
     def check_poll_datetime
-      if @poll.finish > @poll.start && @poll.start > Time.now && @poll.finish > Time.now 
+      if @poll.finish > @poll.start && @poll.start > DateTime.now && @poll.finish > DateTime.now 
         return true 
       else
         flash[:alert] = "You set the wrong start or finish time."
         return false
       end
     end
-
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = current_user
-    end
-
-    # Use callbacks to share common setup or constraints between actions.
+    
     def set_poll
       @poll = Poll.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def poll_params
       params.require(:poll).permit(:title, :body, :start, :finish, :status, :poll_type, :user_id, options_attributes: [:poll_option])
     end

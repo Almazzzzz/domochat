@@ -1,4 +1,4 @@
 class Option < ActiveRecord::Base
   belongs_to :poll
-  has_one :vote, dependent: :destroy
+  has_many :votes, dependent: :destroy
 end

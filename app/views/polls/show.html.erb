@@ -1,23 +1,11 @@
 <!--p id="notice"><%= notice %></p-->
 
 <h3><%= @poll.title %></h3>
-<p>Body: <%= @poll.body %></p>
-<p>Start: <%= @poll.start.to_formatted_s(:long_ordinal) %></p>
-<p>Finish: <%= @poll.finish.to_formatted_s(:long_ordinal) %></p>
+<p><b>Body:</b> <%= @poll.body %></p>
+<p><b>Start:</b> <%= @poll.start.to_formatted_s(:long_ordinal) %></p>
+<p><b>Finish:</b> <%= @poll.finish.to_formatted_s(:long_ordinal) %></p>
     
-<p>Poll Status: 
-  <% case @poll.status %>
-    <% when 2 %> 
-      <span style="color: orange">Voting will start at <%= @poll.start.to_formatted_s(:long_ordinal) %></span>
-    <% when 1 %> 
-      <span style="color: dodgerblue">Voting is in progress. Open 'til <%= @poll.finish.to_formatted_s(:long_ordinal) %></span>
-      <%= button_to "Vote now!", edit_poll_path(@poll), method: :get, class: "btn btn-primary" %>
-    <% when 3 %>
-      <span style="color: red">Voting was closed at <%= @poll.finish.to_formatted_s(:long_ordinal) %></span>
-  <% end %>
-</p>
-    
-<p>Poll Type: 
+<p><b>Poll Type:</b> 
   <% case @poll.poll_type %>
     <% when 1 %>
       <span>RadioButtons</span>
@@ -26,18 +14,35 @@
   <% end %>
 </p>
 
-<p>User: <%= @poll.user_id %></p>
+<p><b>User:</b> <%= @poll.user_id %></p>
 
-<p>Poll ID: <%= @poll.id %></p>
-  <% @options = Option.where(:poll_id => @poll.id) %>
-  <p>Options: </p>    
+<p><b>Poll ID:</b> <%= @poll.id %></p>
 
-  <% @options.each_with_index do |option, index| %>
-    <p>Option 
-    <span><%= index + 1 %>:</span>
-    <%= option.poll_option %></p>     
+<p><b>Options:</b></p>
+<% @options = Option.where(:poll_id => @poll.id) %>
+<% @options.each_with_index do |option, index| %>
+  <p>Opt. 
+  <span><%= index + 1 %>:</span>
+  <b><%= option.poll_option %></b> | <span style="color: orange"><%= Vote.where(:option_id => option.id).count %></span></p>     
+<% end %>
+
+<p><b>Poll Status:</b> 
+  <% case @poll.status %>
+    <% when 2 %> 
+      <span style="color: orange">Voting will start at <%= @poll.start.to_formatted_s(:long_ordinal) %></span>
+    <% when 1 %> 
+      <span style="color: dodgerblue">Voting is in progress. Open 'til <%= @poll.finish.to_formatted_s(:long_ordinal) %></span>
+      <%= button_to "Vote now!", voting_poll_path(@poll), method: :get, class: "btn btn-primary" %>
+    <% when 3 %>
+      <span style="color: red">Voting was closed at <%= @poll.finish.to_formatted_s(:long_ordinal) %></span>
   <% end %>
+</p>
 
-<%= link_to 'Edit', edit_poll_path(@poll) %> | 
-<%= link_to 'Destroy', @poll, method: :delete, data: { confirm: 'Are you sure?' } %> |
-<%= link_to 'All Polls', polls_path %>
+<% if @poll.user == current_user %>
+  <% if (DateTime.now.to_i - @poll.created_at.to_i) < @editing_time %>
+    <%= link_to 'Edit', edit_poll_path(@poll) %> | 
+  <% end %> 
+  <%= link_to 'Destroy', @poll, method: :delete, data: { confirm: 'Are you sure?' } %> | 
+  <%= link_to 'All Polls', polls_path %> | 
+  <%= link_to 'My Polls', my_polls_path %>
+<% end %>

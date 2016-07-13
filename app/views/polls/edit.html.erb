@@ -1,6 +1,7 @@
 <h1>Editing Poll</h1>
 
-<%= render 'form' %>
+<% @action_type = 'edit' %>
+<%= render 'form', object: @action_type %>
 
 <%= link_to 'Show', @poll %> |
 <%= link_to 'Back', polls_path %>

@@ -1,0 +1,67 @@
+<h1>Здесь будет голосование</h1>
+
+<% if @poll.status != 1 %>
+	
+	<h2 style="color: red">This poll is not open now.</h2>
+
+<% else %>
+
+	<h1><%= @poll.title %></h1>
+	<p>User ID: <%= @poll.user_id %></p>
+	<p>Poll ID: <%= @poll.id %></p>
+	<p>Body: <%= @poll.body %></p>
+	<p>Start: <%= @poll.start.to_formatted_s(:long_ordinal) %></p>
+	<p>Finish: <%= @poll.finish.to_formatted_s(:long_ordinal) %></p>
+	    
+	<p>Poll Status: 
+	  <% case @poll.status %>
+	    <% when 2 %> 
+	      <span style="color: orange">Voting will start at <%= @poll.start.to_formatted_s(:long_ordinal) %></span>
+	    <% when 1 %> 
+	      <span style="color: dodgerblue">Voting is in progress. Open 'til <%= @poll.finish.to_formatted_s(:long_ordinal) %></span>
+	    <% when 3 %>
+	      <span style="color: red">Voting was closed at <%= @poll.finish.to_formatted_s(:long_ordinal) %></span>
+	  <% end %>
+	</p>
+	    
+	<p>Poll Type: 
+	  <% case @poll.poll_type %>
+	    <% when 1 %>
+	      <span>RadioButtons</span>
+	    <% when 2 %>
+	      <span>Multiply CheckBoxes</span>
+	  <% end %>
+	</p>
+
+	<p><b>Options:</b></p>  
+	<% @option_collection = @poll.options %>
+
+  	<%= form_tag "/votes", method: :post do |f| %>
+		<% case @poll.poll_type %>
+	    	<% when 1 %>
+
+				<% @option_collection.each do |option| %>
+				<div class="field form-group">
+			  		<%= label_tag "poll_option_#{option.id}", class: "radio" do %>
+		            	<!--%= radio_button("options", "poll_option", option.id) %><%= option.poll_option %><br-->
+		            	<%= radio_button("options", "#{option.id}", option.id) %><%= option.poll_option %><br>
+		            <% end %>
+			  	</div>
+				<% end %>
+		    	
+		    <% when 2 %>
+
+				<% @option_collection.each do |option| %>
+				<div class="field form-group">
+			  		<%= label_tag "poll_option_#{option.id}" do %>
+		            	<%= check_box("options", option.id) %> <%= option.poll_option %><br>
+		            <% end %>
+			  	</div>      
+				<% end %>
+		<% end %>
+	  <%= submit_tag "VOTE!", class: "btn btn-lg btn-success" %>
+	  <br><br>
+	<% end %>
+
+<% end %>
+<%= link_to 'All Polls', polls_path %>

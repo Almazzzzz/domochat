@@ -1,53 +1,5 @@
 <!--p id="notice"><%= notice %></p-->
 
-<h1>My (All) Polls</h1>
+<h1>All Polls</h1>
 
-  <% @polls.each do |poll| %>
-    <h3><%= link_to "#{poll.title}", poll_path(poll) %></h3>
-    <p>Body: <%= truncate(poll.body, length: 100) %></p>
-
-    <p>Start: <%= poll.start.to_formatted_s(:long_ordinal) %></p>
-    <p>Finish: <%= poll.finish.to_formatted_s(:long_ordinal) %></p>
-    
-    <p>Poll Status: 
-    <% case poll.status %>
-      <% when 2 %> 
-      <span style="color: orange">Voting will start at <%= poll.start.to_formatted_s(:long_ordinal) %></span>
-      <% when 1 %> 
-      <span style="color: dodgerblue">Voting is in progress. Open 'til <%= poll.finish.to_formatted_s(:long_ordinal) %></span>
-      <%= button_to "Vote now!", edit_poll_path(poll), method: :get, class: "btn btn-primary" %>
-      <% when 3 %>
-      <span style="color: red">Voting was closed at <%= poll.finish.to_formatted_s(:long_ordinal) %></span>
-    <% end %>
-    </p>
-    
-    <p>Poll Type: 
-    <% case poll.poll_type %>
-      <% when 1 %>
-      <span>RadioButtons.</span>
-      <% when 2 %>
-      <span>Multiply CheckBoxes.</span>
-    <% end %>
-    </p>
-    <p>User: <%= poll.user_id %></p>
-    <p>Poll ID: <%= poll.id %></p>
-    <% @options =  Option.where(:poll_id => poll.id) %>
-    <p>Options: </p>    
-    <% @options.each_with_index do |option, index| %>
-      <p>Option 
-      <span><%= index + 1 %>:</span>
-      <%= option.poll_option %></p>     
-    <% end %>
-
-    <%= link_to 'Show', poll %> |
-    <%= link_to 'Edit', edit_poll_path(poll) %> | 
-    <%= link_to 'Destroy', poll, method: :delete, data: { confirm: 'Are you sure?' } %>
-  <hr />
-  <% end %>
-
-<br>
-
-<% if @polls.size == 0 %>
-  <p>You don't have any polls. <%= link_to "It's time to create one", new_poll_path %>.</p>
-<% end %>
-<%= button_to "Create New Poll", new_poll_path, method: :get, class: "btn btn-lg btn-primary" %>
+<%= render 'list' %>
