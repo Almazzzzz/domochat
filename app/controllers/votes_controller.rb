@@ -4,6 +4,7 @@ class VotesController < ApplicationController
 	def create
     	params[:options].each do |option|
       	   	if option[1] != "" && option[1] != "0"
+		      	byebug
 		      	@vote = Vote.new
 		      	@vote.user = current_user
 		      	@vote.option_vote = 1
