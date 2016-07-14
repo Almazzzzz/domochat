@@ -111,6 +111,7 @@ class PollsController < ApplicationController
           new_option = Option.new
           new_option.poll_option = option[:poll_option]
           new_option.poll_id = @poll.id
+          #new_option.poll_id = @poll.id
           new_option.save!
         end
       end
