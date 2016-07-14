@@ -1,8 +1,9 @@
 class PollsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_poll, only: [:voting, :show, :edit, :update, :destroy]
-  before_action :set_editing_time, only: [:edit, :show, :index, :my_index]
-  
+  before_action :set_poll,          only: [:voting, :show, :edit, :update, :destroy]
+  before_action :set_editing_time,  only: [:edit, :show, :index, :my_index]
+  before_action :user_can_vote?,    only: [:voting, :show]
+
   # Set editing poll time limit
   def set_editing_time
   	@editing_time = 10.hour
@@ -17,7 +18,6 @@ class PollsController < ApplicationController
   def my_index
     @polls = current_user.polls.order("status ASC")
   end
-
 
   # GET /polls/1
   # GET /polls/1.json
@@ -53,6 +53,11 @@ class PollsController < ApplicationController
 
   # GET /polls/1/voting
   def voting
+    unless user_can_vote?
+      respond_to do |format|
+        format.html { redirect_to @poll, alert: "You've voted for this poll." }
+      end
+    end  
   end
 
   # POST /polls
@@ -120,8 +125,17 @@ class PollsController < ApplicationController
     end
   end
 
-  def results
-    @options = @poll.options
+  def user_can_vote?
+    @poll.options.each do |poll_option|
+      if poll_option.votes.pluck(:user_id).include? current_user.id
+        @voted = true
+        false
+        return
+      else
+        @voted = false
+        true
+      end
+    end  
   end
 
   private

@@ -21,9 +21,12 @@
 <p><b>Options:</b></p>
 <% @options = Option.where(:poll_id => @poll.id) %>
 <% @options.each_with_index do |option, index| %>
-  <p>Opt. 
-  <span><%= index + 1 %>:</span>
-  <b><%= option.poll_option %></b> | <span style="color: orange"><%= Vote.where(:option_id => option.id).count %></span></p>     
+  <p>Opt. <%= index + 1 %>: <b><%= option.poll_option %></b>
+  <% if @voted || @poll.status == 3 %>
+    <b> &rArr; <span style="color: orange">
+    <%= Vote.where(:option_id => option.id).count %>
+    </span></b></p>
+  <% end %> 
 <% end %>
 
 <p><b>Poll Status:</b> 
@@ -32,7 +35,11 @@
       <span style="color: orange">Voting will start at <%= @poll.start.to_formatted_s(:long_ordinal) %></span>
     <% when 1 %> 
       <span style="color: dodgerblue">Voting is in progress. Open 'til <%= @poll.finish.to_formatted_s(:long_ordinal) %></span>
-      <%= button_to "Vote now!", voting_poll_path(@poll), method: :get, class: "btn btn-primary" %>
+      <% unless @voted %>
+        <%= button_to "Vote now!", voting_poll_path(@poll), method: :get, class: "btn btn-primary" %>
+      <% else %>
+        <p style="color: red"><b>You've already voted for this poll.</b></p>
+      <% end %>
     <% when 3 %>
       <span style="color: red">Voting was closed at <%= @poll.finish.to_formatted_s(:long_ordinal) %></span>
   <% end %>
@@ -46,3 +53,8 @@
   <%= link_to 'All Polls', polls_path %> | 
   <%= link_to 'My Polls', my_polls_path %>
 <% end %>
+<p></p>
+<p align="center"><%= link_to '< Prev. Poll', Poll.where("id < ?", @poll.id).last %>
+&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;<%= link_to 'Next Poll >', Poll.where("id > ?", @poll.id).first %></p>
+
+
