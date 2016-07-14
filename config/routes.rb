@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resource :profile, only: [:show, :update, :edit]
   resources :flats
   resources :posts
+  resources :chat_messages
 
   root 'welcome#index'
 

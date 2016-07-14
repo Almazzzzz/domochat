@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
 
   has_many :identities, dependent: :destroy
   has_many :emails, dependent: :destroy
+  has_many :chat_messages
   has_one :profile, dependent: :destroy
   has_many :polls, -> { includes :options }
   accepts_nested_attributes_for :polls

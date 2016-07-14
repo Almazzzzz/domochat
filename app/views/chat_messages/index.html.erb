@@ -1,0 +1,14 @@
+<h1>Chat</h1>
+
+<br />
+
+<div id="message_view">
+  <ul>
+    <%= sync partial: 'chat_message', collection: @chat_messages %>
+    <%= sync_new partial: 'chat_message', resource: ChatMessage.new %>
+  </ul>
+</div>
+
+<br />
+
+<%= render partial: 'form', locals: { chat_message: current_user.chat_messages.build } %>
