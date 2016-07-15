@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   match '/polls/:id/voting' => 'polls#voting', via: [:get], :as => :voting_poll
   match '/mypolls' => 'polls#my_index', via: [:get], :as => :my_polls
 
-  post '/votes' => 'votes#create'
+  post '/votes' => 'votes#create', via: [:post], :as => :new_votes
 
   resource :profile, only: [:show, :update, :edit]
   resources :flats

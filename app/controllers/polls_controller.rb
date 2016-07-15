@@ -22,8 +22,6 @@ class PollsController < ApplicationController
   # GET /polls/1
   # GET /polls/1.json
   def show
-    # Вынести определение @options или @poll.options (везде по-разному) в отдельный метод
-    #@options = Option.where(:poll_id => @poll.id)
   end
 
   # GET /polls/new
@@ -68,8 +66,7 @@ class PollsController < ApplicationController
     @poll.user = current_user
 
     respond_to do |format|
-      if check_poll_datetime && @poll.save
-        save_poll_options
+      if check_poll_datetime && @poll.save && save_poll_options
         format.html { redirect_to @poll, notice: 'Poll was successfully created.' }
         format.json { render :show, status: :created, location: @poll }
       else
@@ -108,18 +105,15 @@ class PollsController < ApplicationController
     if @poll.options.empty?
       params[:options].each do |option|
         if option[:poll_option] != ""
-          new_option = Option.new
-          new_option.poll_option = option[:poll_option]
-          new_option.poll_id = @poll.id
-          #new_option.poll_id = @poll.id
+          new_option = Option.new(:poll_option => option[:poll_option], :poll_id => @poll.id)
           new_option.save!
         end
       end
     else
-      params[:options].each do |option|
-        if option[1] != ""
-          update_option = Option.where(:id => option[0].to_i).first
-          update_option.poll_option = option[1]
+      params[:options].each do |key, value|
+        if value != ""
+          update_option = Option.where(:id => key.to_i).first
+          update_option.poll_option = value
           update_option.save!
         end
       end

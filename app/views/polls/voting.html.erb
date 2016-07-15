@@ -32,29 +32,25 @@
 	</p>
 
 	<p><b>Options:</b></p>  
-	<% @option_collection = @poll.options %>
+	<!--% @option_collection = @poll.options %-->
 
-  	<%= form_tag "/votes", method: :post do |f| %>
+  	<%= form_tag "/votes" do |f| %>
 		<% case @poll.poll_type %>
 	    	<% when 1 %>
-
-				<% @option_collection.each do |option| %>
+				<% @poll.options.each do |option| %>
 				<div class="field form-group">
 			  		<%= label_tag "poll_option_#{option.id}", class: "radio" do %>
-		            	<!--%= radio_button("options", "poll_option", option.id) %><%= option.poll_option %><br-->
-		            	<%= radio_button("options", "#{option.id}", option.id) %><%= option.poll_option %><br>
+		            	<%= radio_button_tag("options", option.id, checked = false) %><%= option.poll_option %>
 		            <% end %>
 			  	</div>
 				<% end %>
-		    	
 		    <% when 2 %>
-
-				<% @option_collection.each do |option| %>
+				<% @poll.options.each do |option| %>
 				<div class="field form-group">
 			  		<%= label_tag "poll_option_#{option.id}" do %>
-		            	<%= check_box("options", option.id) %> <%= option.poll_option %><br>
+		            	<%= check_box("options", option.id) %> <%= option.poll_option %>
 		            <% end %>
-			  	</div>      
+			  	</div>
 				<% end %>
 		<% end %>
 	  <%= submit_tag "VOTE!", class: "btn btn-lg btn-success" %>
