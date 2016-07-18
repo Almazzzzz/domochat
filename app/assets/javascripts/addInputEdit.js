@@ -1,6 +1,6 @@
-var counter = 2;
+var counter = 1;
 var limit = 20;
-function addInput(divName){
+function addInputEdit(divName){
      if (counter == limit)  {
           alert("You have reached the limit of adding " + counter + " options");
      }

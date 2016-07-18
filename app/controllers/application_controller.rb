@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  
+
   before_filter :ensure_signup_complete, only: [:new, :create, :update, :destroy]
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
 
   include Pundit
 
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :exception #:null_session
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 

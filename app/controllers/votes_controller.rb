@@ -1,6 +1,7 @@
 class VotesController < ApplicationController
 	before_action :authenticate_user!
 	
+	# Create new votes for poll options
 	def create
     	if params[:options].class == String
     		@new_vote = Vote.new(:user => current_user, :option_vote => 1, :option_id => params[:options].to_i)
@@ -20,12 +21,10 @@ class VotesController < ApplicationController
 	  	end
 	end
 	
-	def show
-	end	
-
 	private
 
 	def vote_params
 	  params.require(:vote).permit(:option_vote, :user_id, :option_id, :poll_option, {:options => []})
 	end
+
 end
