@@ -44,7 +44,7 @@ class PollsController < ApplicationController
   			alert_string = alert_string + "Sorry! You can't edit this poll, 'cause editing time limit is over."
   			path = @poll
   		end			
-			unless alert_string = ''
+			unless alert_string == ''
         respond_to do |format|
   			 format.html { redirect_to path, alert: alert_string }
   		  end
@@ -66,7 +66,7 @@ class PollsController < ApplicationController
     @poll = Poll.new(poll_params)
     # Now set Poll status eq. 1 for testing. 
     # All statuses: 1 = 'open'; 2 = 'before'; 3 = 'closed'
-    @poll.status = 1
+    @poll.status = 2
     @poll.user = current_user
 
     respond_to do |format|
@@ -100,7 +100,7 @@ class PollsController < ApplicationController
   def destroy
     @poll.destroy
     respond_to do |format|
-      format.html { redirect_to polls_url, notice: 'Poll was successfully destroyed.' }
+      format.html { redirect_to polls_url, notice: "Poll \##{@poll.id} was successfully destroyed." }
       format.json { head :no_content }
     end
   end

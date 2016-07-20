@@ -30,7 +30,14 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'puma'
 
 # Use Capistrano for deployment
-gem 'capistrano-rails', group: :development
+group :development do
+  gem 'capistrano',         require: false
+  gem 'capistrano-sidekiq', require: false
+  gem 'capistrano-rails',   require: false
+  gem 'capistrano-bundler', require: false
+  gem 'capistrano3-puma',   require: false
+  gem 'capistrano-crono'
+end
 
 gem 'devise', '4.1.1'
 gem 'devise_invitable'
@@ -52,6 +59,7 @@ gem 'carrierwave'
 
 gem 'rack', '~> 2.0.1'
 
+gem 'crono'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -60,7 +68,6 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'ffaker'
   gem 'capybara'
-
   gem 'pry-rails'
 end
 
