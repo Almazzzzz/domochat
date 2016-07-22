@@ -21,7 +21,7 @@ require 'capistrano/rails'
 require 'capistrano/bundler'
 require 'capistrano/sidekiq'
 require 'capistrano/puma'
-require 'capistrano/crono'
+# require 'capistrano/crono'
 
 # require 'capistrano/rvm'
 # require 'capistrano/rbenv'

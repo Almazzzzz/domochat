@@ -13,6 +13,30 @@ describe "Sign Up" do
     expect(page).to have_content('Welcome! You have signed up successfully.')
   end
 end  
+# This is only to test the issue after Rails 5.0 update
+describe "Devise" do
+  it "should create new user, sign in, sign out and sign in again" do
+    user_count = User.count
+    visit new_user_registration_path
+    fill_in "Email", :with => "q@q.ru"
+    fill_in "Password", :with => "qwerty"
+    fill_in "Password confirmation", :with => "qwerty"
+    click_button 'Sign up'
+    expect(User.count).to eq(user_count + 1)
+    @user = User.last
+    click_link "Sign Out"
+    expect(page).to have_content('Signed out successfully.')
+    visit new_user_session_path
+    fill_in "Email", :with => "w@w.ru"
+    fill_in "Password", :with => "qwerty"
+    click_button 'Sign in'
+    user_sign_in_count = @user.sign_in_count
+    user = User.find(@user.id)
+    expect(user.sign_in_count).to eq(user_sign_in_count + 1)
+    expect(page).to have_content('Signed in successfully.')
+  end
+end  
+
 describe "Sign in and further:" do
   before do
     @user = FactoryGirl.create(:user, :email => "w@w.ru", :password => "qwerty", 
