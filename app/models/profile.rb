@@ -7,6 +7,4 @@ class Profile < ActiveRecord::Base
     [self.first_name, self.middle_name, self.last_name].join(" ")
   end
 
-
-
 end

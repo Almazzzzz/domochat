@@ -1,13 +1,13 @@
 class PollsController < ApplicationController
-  before_filter :set_cache_headers, only: [:voting, :show]
   before_action :authenticate_user!
+  before_filter :set_cache_headers, only: [:voting, :show ]
   before_action :set_poll,          only: [:voting, :show, :edit, :update, :destroy]
   before_action :set_editing_time,  only: [:edit, :show, :index, :my_index]
   before_action :user_can_vote?,    only: [:voting, :show]
 
   # Set editing poll time limit
   def set_editing_time
-  	@editing_time = 10.hour
+    @editing_time = 10.hour
   end
 
   # GET /polls
@@ -35,20 +35,20 @@ class PollsController < ApplicationController
 
   # GET /polls/1/edit
   def edit
-  	alert_string = ''
-  		if @poll.user != current_user
-  			alert_string = "You can edit only your own polls. "
-  			path = my_polls_path
-  		end
-  		if (DateTime.now.to_i - @poll.created_at.to_i) > @editing_time
-  			alert_string = alert_string + "Sorry! You can't edit this poll, 'cause editing time limit is over."
-  			path = @poll
-  		end			
-			unless alert_string == ''
+    alert_string = ''
+      if @poll.user != current_user
+        alert_string = "You can edit only your own polls. "
+        path = my_polls_path
+      end
+      if (DateTime.now.to_i - @poll.created_at.to_i) > @editing_time
+        alert_string = alert_string + "Sorry! You can't edit this poll, 'cause editing time limit is over."
+        path = @poll
+      end     
+      unless alert_string == ''
         respond_to do |format|
-  			 format.html { redirect_to path, alert: alert_string }
-  		  end
-  	  end
+         format.html { redirect_to path, alert: alert_string }
+        end
+      end
   end
 
   # GET /polls/1/voting
@@ -86,6 +86,7 @@ class PollsController < ApplicationController
     respond_to do |format|
       if @poll.update(poll_params) && save_poll_options #&& check_poll_datetime
         #save_poll_options
+        byebug
         format.html { redirect_to @poll, notice: 'Poll was successfully updated.' }
         format.json { render :show, status: :ok, location: @poll }
       else
@@ -181,5 +182,4 @@ class PollsController < ApplicationController
     def poll_params
       params.require(:poll).permit(:title, :body, :start, :finish, :status, :poll_type, :user_id)#, options_attributes: [:poll_option])
     end
-
 end

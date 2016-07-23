@@ -1,6 +1,6 @@
 <%= simple_form_for(@poll) do |f| %>
   <%= f.error_notification %>
-    
+    <%= action_name %>
     <%= f.input :title, label: 'Title', autocomplete: "off", placeholder: "Add your question here" %> 
     <%= f.input :body, label: 'Body', autocomplete: "off", placeholder: "Add your description here", 
     :input_html => {rows: 7} %>
@@ -9,7 +9,7 @@
     <%= f.input :finish, start_year: Time.now.year, 
     order: [:day, :month, :year, :hour, :minute], minute_step: 30 %>
     
-    <% case @action_type %>
+    <% case action_name %>
       <% when 'new' %>
         <%= f.input :poll_type, as: :select, collection: 
                     [['RadioButtons', 1], ['Multiply CheckBoxes', 2]], selected: 'RadioButtons' %>
@@ -25,7 +25,7 @@
         <br>
         <input type="button" class="btn btn-primary" value="Add another option (max. 20)" onClick="addInput('dynamicInput');">
         <p></p>
-      <% when 'edit' %>
+      <% when 'edit', 'create', 'update' %>
         <%= f.input :poll_type, as: :select, collection: 
                     [['RadioButtons', 1], ['Multiply CheckBoxes', 2]], selected: "#{@poll.poll_type}" %>
         <p><b>Options:</b></p>
@@ -35,7 +35,7 @@
         <% end %>
         <% if @poll.options.empty? %>
         <div id="dynamicInputEdit">
-          <b>Option <%= @poll.options.count + 1 %></b><br>
+          Option <%= @poll.options.count + 1 %><br>
           <input class="string optional form-control" type="text" name="options[]" id="options" autocomplete="off">
         </div>
         <br>
